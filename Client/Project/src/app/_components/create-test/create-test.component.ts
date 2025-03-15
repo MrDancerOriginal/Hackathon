@@ -23,7 +23,7 @@ export class CreateTestComponent implements OnInit {
       (response) => {
         // Успішна відповідь
         console.log('Status Code:', response.status);  // Вивести код статусу
-        console.log('Response Body:', response.body);  // Вивести відповідь
+        console.log('Response Body:', response);  // Вивести відповідь
       },
       (error) => {
         // Обробка помилки

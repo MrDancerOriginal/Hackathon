@@ -101,6 +101,13 @@ namespace Server.Controllers
             return Ok(tests);
         }
 
+        [HttpGet("cat")]
+        public async Task<IActionResult> GetTest()
+        {
+            var user = new { id = 1, name = "Bob", status = "success" };
+            return Ok(user);
+        }
+
 
 
         /// <summary>

@@ -13,7 +13,7 @@ export class TestingService {
   constructor(private http: HttpClient) { }
 
   getRequest(): Observable<any> {
-    return this.http.get<any>(this.baseUrl + "Test/user/1")
+    return this.http.get<any>(this.baseUrl + "Test/cat")
   }
 
   postRequest() {
