@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Server.Models.Entities;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 
 namespace Server.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options)
            : base(options)
