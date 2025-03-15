@@ -7,7 +7,6 @@ import { RegisterComponent } from './_components/register/register.component';
 import { CreateTestComponent } from './_components/create-test/create-test.component';
 import { AppRoutingModule } from './app.routes';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouteReuseStrategy } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 
 

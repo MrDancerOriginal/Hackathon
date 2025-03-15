@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environments';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,8 @@ export class TestingService {
 
   constructor(private http: HttpClient) { }
 
-  getRequest() {
-    return this.http.get<any>(this.baseUrl)
+  getRequest(): Observable<any> {
+    return this.http.get<any>(this.baseUrl + "Test/user/1")
   }
 
   postRequest() {
