@@ -15,21 +15,11 @@ export class QuizComponent implements OnInit {
   selectedAnswer: Answer | null = null;
   message: string = '';
 
-  questions: Question[] = [
-    {
-      QuestionText: 'Generated question',
-      Answers: [
-        { AnswerText: 'Correct answer', IsCorrect: true },
-        { AnswerText: 'Incorrect answer 1', IsCorrect: false },
-        { AnswerText: 'Incorrect answer 2', IsCorrect: false },
-        { AnswerText: 'Incorrect answer 3', IsCorrect: false }
-      ]
-    }
-  ];
+  questions: Question[];
 
   checkAnswer(answer: Answer) {
     this.selectedAnswer = answer;
-    this.message = answer.IsCorrect ? 'Correct!' : 'Try again.';
+    this.message = answer.isCorrect ? 'Correct!' : 'Try again.';
   }
 
   index: number;
@@ -38,7 +28,8 @@ export class QuizComponent implements OnInit {
 
   ngOnInit(): void {
     this.quizService.generateTest(this.index).subscribe(response => {
-      this.questions = response;
+      this.questions = response.questions
+      console.log(this.questions);
     });
   }
 

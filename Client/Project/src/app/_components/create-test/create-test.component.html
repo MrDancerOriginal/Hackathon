@@ -30,11 +30,12 @@
     <!-- Тепер над кнопкою -->
   </div>
 
-  <label for="file-upload" class="custom-file-button" hidden (click)="onUpload()">
+  <label for="file-upload" class="custom-file-button" hidden (click)="onLoad()">
     <img src="assets/file-upload.png" alt="Додати файл" />
     Завантажити файл
   </label>
 
-  <button type="submit" (click)="onUpload()" disabled="{{!selectedFile}}">Відправити файл</button>
+
+  <button type="submit" (click)="onUpload()" >Відправити файл</button>
   <button type="submit" (click)="onGenerate()" >Згенерувати тест</button>
 </form>

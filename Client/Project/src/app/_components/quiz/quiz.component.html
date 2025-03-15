@@ -16,3 +16,13 @@
     </ul>
   </div>
 </div> -->
+
+<div *ngFor="let question of questions">
+  <h2>{{ question.questionText }}</h2>
+  <ul>
+    <li *ngFor="let answer of question.answers" (click)="checkAnswer(answer)">
+      {{ answer.answerText }}
+    </li>
+  </ul>
+  <p *ngIf="selectedAnswer !== null">{{ message }}</p>
+</div>
