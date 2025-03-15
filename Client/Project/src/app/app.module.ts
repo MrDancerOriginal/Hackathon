@@ -8,10 +8,11 @@ import { CreateTestComponent } from './_components/create-test/create-test.compo
 import { AppRoutingModule } from './app.routes';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
+import { QuizComponent } from './_components/quiz/quiz.component';
 
 
 @NgModule({
-  declarations: [AppComponent, AuthComponent, RegisterComponent, CreateTestComponent],
+  declarations: [AppComponent, AuthComponent, RegisterComponent, CreateTestComponent, QuizComponent],
   imports: [
     BrowserModule,
     CommonModule,

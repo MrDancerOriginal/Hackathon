@@ -1,0 +1,18 @@
+<!-- test.component.html -->
+<div class="test-container">
+  <h2>{{ test.title }}</h2>
+  <p><strong>Description:</strong> {{ test.description }}</p>
+  <p><strong>Author ID:</strong> {{ test.authorId }}</p>
+  <p><strong>Date Created:</strong> {{ test.dateCreated }}</p>
+  <p><strong>Status:</strong> {{ test.status }}</p>
+
+  <h3>Questions:</h3>
+  <div *ngFor="let question of test.questions">
+    <h4>{{ question.order }}. {{ question.text }}</h4>
+    <ul>
+      <li *ngFor="let answer of question.answers">
+        {{ answer.text }} <span *ngIf="answer.isCorrect">(✔ Correct)</span>
+      </li>
+    </ul>
+  </div>
+</div>
