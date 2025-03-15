@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { QuizService } from '../../services/quiz.service';
 import { FormsModule } from '@angular/forms';
 import { TestingService } from '../../services/testing.service';
+import { AccountService } from '../../services/account.service';
+import { User } from '../../interfaces/user.interface';
 
 @Component({
   selector: 'app-create-test',
@@ -10,18 +12,21 @@ import { TestingService } from '../../services/testing.service';
 })
 export class CreateTestComponent implements OnInit {
 
+  currentUser : User;
+
   //Кількість питань, кількість відповідей, назва, файл
   selectedFile: File | null = null;
   fileName: string = 'Файл не обрано';
   currentId = -1;
 
-  constructor(private fileUploadService: QuizService, private testingService: TestingService) {
+  constructor(private fileUploadService: QuizService, private testingService: TestingService, private accountService:AccountService) {
     console.log('CreateTestComponent initialized');
 
   }
 
   ngOnInit(): void {
 
+    this.accountService.currentUser$.subscribe(user => this.currentUser = user);
 
     console.log("Loading")
 
@@ -37,8 +42,6 @@ export class CreateTestComponent implements OnInit {
       }
     );
   }
-
-
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -66,6 +69,11 @@ export class CreateTestComponent implements OnInit {
       (response) => {
         this.currentId = response;
         console.log('File uploaded successfully:', response);
+
+        this.fileUploadService.createTest('title', this.currentUser.token).subscribe(result => {
+
+        });
+
       },
       (error) => {
         console.error('File upload failed:', error);

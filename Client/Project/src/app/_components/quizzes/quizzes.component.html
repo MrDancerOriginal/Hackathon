@@ -1,1 +1,26 @@
-<p>quizzes works!</p>
+<div class="quizzes-container">
+  <h1>Your Quizzes</h1>
+
+  <div *ngIf="tests && tests.length > 0; else noTests">
+    <div *ngFor="let test of tests" class="quiz-card">
+      <h2>{{ test.title }}</h2>
+      <p><strong>Created by:</strong> {{ test.authorId }}</p>
+      <p><strong>Created on:</strong> {{ test.dateCreated | date:'short' }}</p>
+      <p><strong>Status:</strong> {{ test.status }}</p>
+
+      <div class="questions">
+        <h3>Questions:</h3>
+        <ul>
+          <li *ngFor="let question of test.questions">
+            <p>{{ question.title }}</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Placeholder if no tests are available -->
+  <ng-template #noTests>
+    <p>No quizzes available for this user.</p>
+  </ng-template>
+</div>
