@@ -1,15 +1,19 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Server.Configurations;
 using Server.Models.DTOs;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Text;
 
 namespace Server.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
@@ -77,6 +81,57 @@ namespace Server.Controllers
             }
 
             return BadRequest();
+        }
+
+        [Route("Login")]
+        [HttpPost]
+        public async Task<IActionResult> Login([FromBody] UserLoginRequestDto loginRequest)
+        {
+            if (ModelState.IsValid)
+            {
+                // Check if user is exist
+                var existing_user = await _userManager.FindByEmailAsync(loginRequest.Email);
+
+                if (existing_user == null)
+                    return BadRequest(new AuthResult()
+                    {
+                        Errors = new List<string>()
+                        {
+                            "Invalid payload"
+                        },
+                        Result = false
+                    });
+
+                var isCorrect = await _userManager.CheckPasswordAsync(existing_user, loginRequest.Password);
+
+                if (!isCorrect)
+                    return BadRequest(new AuthResult()
+                    {
+                        Errors = new List<string>()
+                        {
+                            "Invalid credentials"
+                        },
+                        Result = false
+                    });
+
+                var jwtToken = GenerateJwtToken(existing_user);
+
+                return Ok(new AuthResult()
+                {
+                    Token = jwtToken,
+                    Result = true
+                });
+            }
+
+            return BadRequest(new AuthResult()
+            {
+                Errors = new List<string>()
+                        {
+                            "Invalid credentials"
+                        },
+                Result = false
+            });
+
         }
 
         private string GenerateJwtToken(IdentityUser user)
