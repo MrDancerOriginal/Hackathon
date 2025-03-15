@@ -21,6 +21,6 @@ export class QuizService {
 
     const headers = new HttpHeaders();
 
-    return this.http.post(this.baseUrl + "Tests/create", formData, { headers });
+    return this.http.post(this.baseUrl + "Tests/upload", formData, { headers });
   }
 }
