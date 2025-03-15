@@ -40,7 +40,9 @@ export class CreateTestComponent implements OnInit {
   }
 
   onGenerate():void{
-    this.fileUploadService.generateTest(this.currentId);
+    this.fileUploadService.generateTest(1).subscribe((response) => {
+      console.log(response)
+    });
   }
 
   onUpload(): void {

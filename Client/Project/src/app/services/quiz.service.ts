@@ -15,21 +15,28 @@ export class QuizService {
 
   constructor(private http: HttpClient) { }
 
-  uploadFile(data: any): Observable<number> {
+  uploadFile(data: File): Observable<any> {
     const formData = new FormData();
-    formData.append('title', data.title);
-    formData.append('questionCount', data.questionCount.toString());
-    formData.append('answerCount', data.answerCount.toString());
-    formData.append('file', data.file, data.file.name);
+    formData.append('file', data);
 
-    return this.http.post<number>(this.baseUrl + 'Tests/upload', formData);
+    // const formData = new FormData();
+    // formData.append('title', data.title);
+    // formData.append('questionCount', data.questionCount.toString());
+    // formData.append('answerCount', data.answerCount.toString());
+    // formData.append('file', data.file, data.file.name);
+
+    return this.http.post<number>(this.baseUrl + 'Test/upload', formData, {
+      headers: {
+        // При передачі FormData не встановлюйте `Content-Type`, браузер виставить його автоматично
+      }
+    });
   }
 
   getTestsByUser(userId : string){
     return this.http.get<any>(`${this.baseUrl}/user/${userId}`);
   }
 
-  generateTest(pdfFileId: number): Observable<any> {
+  generateTest(pdfFileId: number = 1): Observable<any> {
     const requestPayload = {
       PDFFileId: pdfFileId
     };
@@ -38,7 +45,9 @@ export class QuizService {
       'Content-Type': 'application/json'
     });
 
-    return this.http.post<any>(`${this.baseUrl}/generate`, requestPayload, { headers });
+    console.log("Start");
+
+    return this.http.post<any>(`${this.baseUrl}Test/generate/${pdfFileId}`, pdfFileId, { headers });
   }
 
 }
