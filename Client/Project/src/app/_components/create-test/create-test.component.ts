@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TestingService } from '../../services/testing.service';
 import { AccountService } from '../../services/account.service';
 import { User } from '../../interfaces/user.interface';
+import { GoogleFormService } from '../../services/google-form.service';
 
 @Component({
   selector: 'app-create-test',
@@ -19,7 +20,8 @@ export class CreateTestComponent implements OnInit {
   fileName: string = 'Файл не обрано';
   currentId = -1;
 
-  constructor(private fileUploadService: QuizService, private testingService: TestingService, private accountService:AccountService) {
+
+  constructor(private fileUploadService: QuizService, private testingService: TestingService, private accountService:AccountService, private googleFormsService : GoogleFormService) {
     console.log('CreateTestComponent initialized');
 
   }
@@ -70,7 +72,7 @@ export class CreateTestComponent implements OnInit {
         this.currentId = response;
         console.log('File uploaded successfully:', response);
 
-        this.fileUploadService.createTest('title', this.currentUser.token).subscribe(result => {
+        this.fileUploadService.createTest('title', this.currentUser.id).subscribe(result => {
 
         });
 
@@ -80,4 +82,19 @@ export class CreateTestComponent implements OnInit {
       }
     );
   }
+
+
+
+  // Створення Google форми
+  createForm() {
+    this.googleFormsService.createGoogleForm()
+      .then(() => {
+        console.log('Форма успішно створена!');
+      })
+      .catch(error => {
+        console.error('Помилка при створенні форми:', error);
+      });
+  }
+
+
 }
