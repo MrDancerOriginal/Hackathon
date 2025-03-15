@@ -180,11 +180,11 @@ namespace Server.Controllers
             return builder.ToString();
         }
 
-        [HttpPost("generate")]
-        public async Task<IActionResult> GenerateTest([FromBody] GenerateTestRequest request)
+        [HttpPost("generate/{PDFFileId}")]
+        public async Task<IActionResult> GenerateTest(int PDFFileId)
         {
             // Знаходимо PDF-файл у БД за його ідентифікатором
-            var pdfFile = await _context.PDFFiles.FindAsync(request.PDFFileId);
+            var pdfFile = await _context.PDFFiles.FindAsync(PDFFileId);
             if (pdfFile == null)
                 return NotFound("PDF файл не знайдено.");
 
