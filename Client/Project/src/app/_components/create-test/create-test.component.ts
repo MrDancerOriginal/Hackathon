@@ -12,6 +12,7 @@ export class CreateTestComponent implements OnInit {
 
   //Кількість питань, кількість відповідей, назва, файл
   selectedFile: File | null = null;
+  fileName: string = 'Файл не обрано';
   currentId = -1;
 
   constructor(private fileUploadService: QuizService, private testingService: TestingService) {
@@ -20,6 +21,8 @@ export class CreateTestComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+
     console.log("Loading")
 
     this.testingService.getRequest().subscribe(
@@ -35,8 +38,17 @@ export class CreateTestComponent implements OnInit {
     );
   }
 
-  onFileSelected(event: any): void {
-    this.selectedFile = event.target.files[0];
+
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
+      this.fileName = this.selectedFile.name;
+    } else {
+      this.selectedFile = null;
+      this.fileName = 'Файл не обрано';
+    }
   }
 
   onGenerate():void{
@@ -45,19 +57,19 @@ export class CreateTestComponent implements OnInit {
     });
   }
 
+  onLoad():void{
+    document.getElementById('file-upload')?.click();
+  }
+
   onUpload(): void {
-    if (this.selectedFile) {
-      this.fileUploadService.uploadFile(this.selectedFile).subscribe(
-        (response) => {
-          this.currentId = response;
-          console.log('File uploaded successfully:', response);
-        },
-        (error) => {
-          console.error('File upload failed:', error);
-        }
-      );
-    } else {
-      alert('Please select a file first.');
-    }
+    this.fileUploadService.uploadFile(this.selectedFile).subscribe(
+      (response) => {
+        this.currentId = response;
+        console.log('File uploaded successfully:', response);
+      },
+      (error) => {
+        console.error('File upload failed:', error);
+      }
+    );
   }
 }

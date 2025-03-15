@@ -1,11 +1,40 @@
-<div class="create-test-container">
-  <h2>Створити тест</h2>
-  <div>
-    <label for="fileInput">Виберіть PDF файл:</label>
-    <input type="file" id="fileInput" (change)="onFileSelected($event)" accept=".pdf" />
-  </div>
-  <button (click)="onUpload()">Завантажити файл</button>
-  <button (click)="onGenerate()">Згенерувати тест</button>
-</div>
+<!-- <app-quiz></app-quiz> -->
 
-<app-quiz></app-quiz>
+<h1>Створити тест</h1>
+<form>
+  <div class="form-group">
+    <label for="test-title">Введіть назву тесту:</label>
+    <input type="text" id="test-title" name="test-title" />
+  </div>
+
+  <div class="form-group">
+    <label for="question-count">Кількість питань:</label>
+    <input type="number" id="question-count" name="question-count" />
+  </div>
+
+  <div class="form-group">
+    <label for="answer-options">Кількість варіантів відповідей:</label>
+    <input type="number" id="answer-options" name="answer-options" />
+  </div>
+
+  <div class="file-upload">
+    <input
+      type="file"
+      id="file-upload"
+      name="file-upload"
+      hidden
+      (change)="onFileSelected($event)"
+      accept=".pdf"
+    />
+    <span id="file-name">{{ fileName }}</span>
+    <!-- Тепер над кнопкою -->
+  </div>
+
+  <label for="file-upload" class="custom-file-button" hidden (click)="onUpload()">
+    <img src="assets/file-upload.png" alt="Додати файл" />
+    Завантажити файл
+  </label>
+
+  <button type="submit" (click)="onUpload()" disabled="{{!selectedFile}}">Відправити файл</button>
+  <button type="submit" (click)="onGenerate()" >Згенерувати тест</button>
+</form>
