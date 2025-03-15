@@ -1,10 +1,6 @@
 import { TestStatus } from "../enums/test-status.enum";
+import { PdfFile } from "./pdffile.interface";
 import { Question } from "./question.interface";
-
-interface PdfFile {
-  id: number;
-  // other properties of PdfFile
-}
 
 export interface Test {
   id: number;

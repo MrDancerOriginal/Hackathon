@@ -23,4 +23,21 @@ export class QuizService {
 
     return this.http.post(this.baseUrl + "Tests/upload", formData, { headers });
   }
+
+  getTestsByUser(userId : string){
+    return this.http.get<any>(`${this.baseUrl}/user/${userId}`);
+  }
+
+  generateTest(pdfFileId: number): Observable<any> {
+    const requestPayload = {
+      PDFFileId: pdfFileId
+    };
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<any>(`${this.baseUrl}/generate`, requestPayload, { headers });
+  }
+
 }
