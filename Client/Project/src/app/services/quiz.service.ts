@@ -15,13 +15,14 @@ export class QuizService {
 
   constructor(private http: HttpClient) { }
 
-  uploadFile(file: File): Observable<any> {
+  uploadFile(data: any): Observable<number> {
     const formData = new FormData();
-    formData.append('file', file, file.name);
+    formData.append('title', data.title);
+    formData.append('questionCount', data.questionCount.toString());
+    formData.append('answerCount', data.answerCount.toString());
+    formData.append('file', data.file, data.file.name);
 
-    const headers = new HttpHeaders();
-
-    return this.http.post(this.baseUrl + "Tests/upload", formData, { headers });
+    return this.http.post<number>(this.baseUrl + 'Tests/upload', formData);
   }
 
   getTestsByUser(userId : string){
