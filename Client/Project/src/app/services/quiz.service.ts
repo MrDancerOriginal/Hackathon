@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { User } from '../interfaces/user.interface';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Question } from '../interfaces/question.interface';
+import { TestStatus } from '../enums/test-status.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -38,9 +39,6 @@ export class QuizService {
   }
 
   generateTest(pdfFileId: number = 1): Observable<any> {
-    const requestPayload = {
-      PDFFileId: pdfFileId
-    };
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
@@ -48,9 +46,18 @@ export class QuizService {
 
     console.log("Start");
 
-    return this.http.post<any>(`${this.baseUrl}Test/generate/${
+    return this.http.post<any>(`${this.baseUrl}Test/generate/${pdfFileId}`, pdfFileId, { headers });
+  }
 
-    }`, pdfFileId, { headers });
+  createTest(title: string, userId: number): Observable<any> {
+    const testData = {
+      title: title,
+      description: '',
+      authorId: userId,
+      status: TestStatus.Published
+    };
+
+    return this.http.post(this.baseUrl + 'Test/create', testData);
   }
 
 }
