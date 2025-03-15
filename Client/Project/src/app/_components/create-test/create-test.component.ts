@@ -1,17 +1,35 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { QuizService } from '../../services/quiz.service';
 import { FormsModule } from '@angular/forms';
+import { TestingService } from '../../services/testing.service';
 
 @Component({
   selector: 'app-create-test',
   templateUrl: './create-test.component.html',
   styleUrl: './create-test.component.scss'
 })
-export class CreateTestComponent {
+export class CreateTestComponent implements OnInit {
   selectedFile: File | null = null;
 
-  constructor(private fileUploadService: QuizService) {
+  constructor(private fileUploadService: QuizService, private testingService: TestingService) {
     console.log('CreateTestComponent initialized');
+
+  }
+
+  ngOnInit(): void {
+    console.log("Loading")
+
+    this.testingService.getRequest().subscribe(
+      (response) => {
+        // Успішна відповідь
+        console.log('Status Code:', response.status);  // Вивести код статусу
+        console.log('Response Body:', response.body);  // Вивести відповідь
+      },
+      (error) => {
+        // Обробка помилки
+        console.error('Error:', error);
+      }
+    );
   }
 
   onFileSelected(event: any): void {
