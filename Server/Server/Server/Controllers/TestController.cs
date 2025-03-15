@@ -190,25 +190,26 @@ namespace Server.Controllers
 
             // Формуємо prompt для LLM
             var prompt = $@"
-Generate multiple questions from the text below. 
-For each question, provide exactly one correct answer and four incorrect answers relevant to the context.
-Return the result in the following JSON structure:
+Generate a single multiple-choice question based on the text below.
+Ensure the answer options are directly relevant to the context.
+Return exactly one correct answer and three incorrect answers.
+Provide a valid JSON object in the following structure:
 
 {{
-  ""questions"": [
+  ""Questions"": [
     {{
-      ""questionText"": ""Sample question"",
-      ""answers"": [
-        {{""answerText"": ""Correct answer"", ""isCorrect"": true}},
-        {{""answerText"": ""Wrong answer 1"", ""isCorrect"": false}},
-        {{""answerText"": ""Wrong answer 2"", ""isCorrect"": false}},
-        {{""answerText"": ""Wrong answer 3"", ""isCorrect"": false}},
-        {{""answerText"": ""Wrong answer 4"", ""isCorrect"": false}}
+      ""QuestionText"": ""Generated question"",
+      ""Answers"": [
+        {{""AnswerText"": ""Correct answer"", ""IsCorrect"": true}},
+        {{""AnswerText"": ""Incorrect answer 1"", ""IsCorrect"": false}},
+        {{""AnswerText"": ""Incorrect answer 2"", ""IsCorrect"": false}},
+        {{""AnswerText"": ""Incorrect answer 3"", ""IsCorrect"": false}}
       ]
     }}
   ]
 }}
 
+Do not include any additional text, explanations, or formatting. Return only a valid JSON.
 Text:
 {pdfFile.ExtractedText}
 ";
