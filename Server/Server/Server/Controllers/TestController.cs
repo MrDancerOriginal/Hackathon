@@ -173,27 +173,43 @@ namespace Server.Controllers
             return builder.ToString();
         }
 
-        /// <summary>
-        /// Використовує збережений текст із PDF (pdfFileId), викликає модель Hugging Face,
-        /// створює тест із питаннями та зберігає його у БД.
-        /// </summary>
         [HttpPost("generate")]
         public async Task<IActionResult> GenerateTest([FromBody] GenerateTestRequest request)
         {
-            // Шукаємо PDF-файл у БД
+            // Знаходимо PDF-файл у БД за його ідентифікатором
             var pdfFile = await _context.PDFFiles.FindAsync(request.PDFFileId);
             if (pdfFile == null)
                 return NotFound("PDF файл не знайдено.");
 
-            // Формуємо prompt для моделі
-            // Hugging Face модель може повертати довільний текст, тому зазвичай
-            // доводиться додавати у prompt прохання повернути результат у JSON-форматі
-            var prompt = $"Generate a question and an answer and 3 fake answers : {pdfFile.ExtractedText}";
+            // Формуємо prompt для LLM
+            var prompt = $@"
+Generate multiple questions from the text below. 
+For each question, provide exactly one correct answer and four incorrect answers relevant to the context.
+Return the result in the following JSON structure:
 
+{{
+  ""questions"": [
+    {{
+      ""questionText"": ""Sample question"",
+      ""answers"": [
+        {{""answerText"": ""Correct answer"", ""isCorrect"": true}},
+        {{""answerText"": ""Wrong answer 1"", ""isCorrect"": false}},
+        {{""answerText"": ""Wrong answer 2"", ""isCorrect"": false}},
+        {{""answerText"": ""Wrong answer 3"", ""isCorrect"": false}},
+        {{""answerText"": ""Wrong answer 4"", ""isCorrect"": false}}
+      ]
+    }}
+  ]
+}}
+
+Text:
+{pdfFile.ExtractedText}
+";
+
+            // Виклик LLMService
             string llmResponse;
             try
             {
-                // Виклик LLMService
                 llmResponse = await _llmService.GenerateQuestionsAsync(prompt);
             }
             catch (Exception ex)
@@ -202,68 +218,70 @@ namespace Server.Controllers
                     $"Помилка при виклику LLM: {ex.Message}");
             }
 
-            // Залежно від моделі Hugging Face, відповідь може бути:
-            // 1) В JSON-форматі (і тоді можна розпарсити через JSON)
-            // 2) Просто текст, який доведеться розбирати вручну
-            // Нижче приклад, якщо модель поверне щось, що можна десеріалізувати
-            GeneratedTestDto generatedTest;
+            // Парсимо відповідь, яка повертається як масив об'єктів з полем generated_text.
+            List<HuggingFaceResponse> hfResponses;
             try
             {
-                generatedTest = JsonConvert.DeserializeObject<GeneratedTestDto>(llmResponse);
+                hfResponses = JsonConvert.DeserializeObject<List<HuggingFaceResponse>>(llmResponse);
             }
             catch
             {
-                // Якщо модель повернула не JSON, можна просто повернути сирий текст
                 return Ok(new
                 {
                     rawResponse = llmResponse,
-                    message = "Модель повернула не JSON-формат. Адаптуйте парсинг."
+                    message = "Не вдалося десеріалізувати відповідь від Hugging Face у масив."
                 });
             }
 
-            // Створюємо тест на основі згенерованих даних
-            var test = new Test
+            if (hfResponses == null || hfResponses.Count == 0)
             {
-                Title = request.Title,
-                Description = request.Description,
-                AuthorId = request.AuthorId,
-                DateCreated = DateTime.UtcNow,
-                Status = TestStatus.Draft,
-                PDFFileId = pdfFile.Id
-            };
-
-            int order = 1;
-            if (generatedTest.Questions != null)
-            {
-                foreach (var q in generatedTest.Questions)
+                return Ok(new
                 {
-                    var question = new Question
-                    {
-                        Text = q.QuestionText,
-                        Order = order++
-                    };
-
-                    // Додаємо відповіді
-                    if (q.Answers != null)
-                    {
-                        foreach (var a in q.Answers)
-                        {
-                            question.Answers.Add(new Answer
-                            {
-                                Text = a.AnswerText,
-                                IsCorrect = a.IsCorrect
-                            });
-                        }
-                    }
-
-                    test.Questions.Add(question);
-                }
+                    rawResponse = llmResponse,
+                    message = "Модель повернула пусту відповідь."
+                });
             }
 
-            _context.Tests.Add(test);
-            await _context.SaveChangesAsync();
+            var rawText = hfResponses[0].GeneratedText;
+            if (string.IsNullOrWhiteSpace(rawText))
+            {
+                return Ok(new
+                {
+                    rawResponse = llmResponse,
+                    message = "Модель повернула порожній generated_text."
+                });
+            }
 
-            return Ok(new { testId = test.Id, message = "Тест успішно згенеровано." });
+            // Використовуємо Regex, щоб вилучити JSON-фрагмент між ```json і ```
+            var pattern = new System.Text.RegularExpressions.Regex("```json(.*?)```", System.Text.RegularExpressions.RegexOptions.Singleline);
+            var match = pattern.Match(rawText);
+            if (!match.Success)
+            {
+                return Ok(new
+                {
+                    rawResponse = rawText,
+                    message = "Не знайдено JSON-фрагмент у відповіді. Перевірте формат."
+                });
+            }
+
+            var jsonFragment = match.Groups[1].Value;
+
+            GeneratedTestDto generatedTest;
+            try
+            {
+                generatedTest = JsonConvert.DeserializeObject<GeneratedTestDto>(jsonFragment);
+            }
+            catch
+            {
+                return Ok(new
+                {
+                    rawResponse = jsonFragment,
+                    message = "Не вдалося десеріалізувати вилучений JSON-фрагмент у GeneratedTestDto."
+                });
+            }
+
+            // Повертаємо виключно згенеровані питання та варіанти відповідей у JSON-форматі
+            return Ok(generatedTest);
         }
     }
 
