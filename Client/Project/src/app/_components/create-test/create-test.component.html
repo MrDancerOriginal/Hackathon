@@ -1,0 +1,10 @@
+hello
+
+<div class="create-test-container">
+  <h2>Створити тест</h2>
+  <div>
+    <label for="fileInput">Виберіть PDF файл:</label>
+    <input type="file" id="fileInput" (change)="onFileSelected($event)" accept=".pdf" />
+  </div>
+  <button (click)="onUpload()">Завантажити файл</button>
+</div>
