@@ -28,10 +28,11 @@ export class RegisterComponent {
   initForm() {
     this.registerForm = this.fb.group({
       username: ['', Validators.required],
+      email: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(8)]],
 
       confirmPassword: ['', [Validators.required,
-        Validators.minLength(4),
+        Validators.minLength(6),
         Validators.maxLength(8),
         this.matchValues('password')]]
     });
@@ -48,14 +49,17 @@ export class RegisterComponent {
   }
 
   register() {
-    this.accountService.register(this.registerForm.value).subscribe({
+    this.router.navigateByUrl('/');
+    this.accountService.register({ ...this.registerForm.value}).subscribe({
       next: () => {
-        this.router.navigateByUrl('/members');
+        this.router.navigateByUrl('/');
       },
       error: error => {
         this.validationErrors = error
       }
     });
+
+
   }
 
   cancel() {

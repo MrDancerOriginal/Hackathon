@@ -5,14 +5,12 @@
     <div *ngFor="let test of tests" class="quiz-card">
       <h2>{{ test.title }}</h2>
       <p><strong>Created by:</strong> {{ test.authorId }}</p>
-      <p><strong>Created on:</strong> {{ test.dateCreated | date:'short' }}</p>
-      <p><strong>Status:</strong> {{ test.status }}</p>
 
       <div class="questions">
         <h3>Questions:</h3>
         <ul>
           <li *ngFor="let question of test.questions">
-            <p>{{ question.title }}</p>
+            <p>{{ question.questionText }}</p>
           </li>
         </ul>
       </div>

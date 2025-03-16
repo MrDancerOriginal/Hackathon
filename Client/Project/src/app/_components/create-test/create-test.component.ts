@@ -86,14 +86,14 @@ export class CreateTestComponent implements OnInit {
 
 
   // Створення Google форми
-  createForm() {
-    this.googleFormsService.createGoogleForm()
-      .then(() => {
-        console.log('Форма успішно створена!');
-      })
-      .catch(error => {
-        console.error('Помилка при створенні форми:', error);
-      });
+  async createForm() {
+    try {
+      const token:any = await this.googleFormsService.authenticateUser();
+      const response = await this.googleFormsService.createGoogleForm(token.toString());
+      console.log('Форма створена:', response);
+    } catch (error) {
+      console.error('Помилка:', error);
+    }
   }
 
 

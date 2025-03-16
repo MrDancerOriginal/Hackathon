@@ -1,9 +1,9 @@
 <form *ngIf="!(accountService.currentUser$ | async)" #loginForm="ngForm" class="d-flex" (ngSubmit)="login()" autocomplete="off">
   <input
-         name="username"
-         [(ngModel)]="model.username"
+         name="email"
+         [(ngModel)]="model.email"
          class="form-control me-2"
-         type="text"
+         type="email"
          placeholder="Username">
   <input name="password"
          [(ngModel)]="model.password"

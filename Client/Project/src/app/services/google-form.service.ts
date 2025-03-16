@@ -9,79 +9,40 @@ declare const gapi: any; // Декларація gapi як any
   providedIn: 'root'
 })
 export class GoogleFormService {
-  private CLIENT_ID = environment.clientId;
-  private SCOPES = 'https://www.googleapis.com/auth/forms.body';
+  private clientId = environment.clientId;
+  private scope = 'https://www.googleapis.com/auth/forms.body';
 
-  constructor() {
-    this.loadGapi();
-  }
+  constructor(private http: HttpClient) {}
 
-  private loadGapi() {
-    gapi.load('client:auth2', () => {
-      gapi.client.init({
-        clientId: this.CLIENT_ID,
-        scope: this.SCOPES
+  async authenticateUser() {
+    return new Promise((resolve, reject) => {
+      gapi.load('client:auth2', async () => {
+        await gapi.client.init({
+          clientId: this.clientId,
+          scope: this.scope
+        });
+
+        const authInstance = gapi.auth2.getAuthInstance();
+        authInstance.signIn().then(() => {
+          const token = authInstance.currentUser.get().getAuthResponse().access_token;
+          resolve(token);
+        }).catch(reject);
       });
     });
   }
 
-  public async authenticate() {
-    try {
-      await gapi.auth2.getAuthInstance().signIn();
-      console.log('User  signed in');
-    } catch (error) {
-      console.error('Error signing in', error);
-    }
-  }
-
-  public async createGoogleForm() {
-    await this.authenticate();
-
-    const formBody = {
-      info: {
-        title: 'Angular Test',
-        documentTitle: 'Angular Quiz'
-      }
+  createGoogleForm(accessToken: string) {
+    const url = 'https://forms.googleapis.com/v1/forms';
+    const formData = {
+      info: { title: 'Нова форма' },
+      items: [{
+        title: 'Ваше питання?',
+        questionItem: { question: { required: true } }
+      }]
     };
 
-    const response = await gapi.client.forms.forms.create({
-      resource: formBody
-    });
-
-    const formId = response.result.formId;
-
-    const update = {
-      requests: [
-        {
-          createItem: {
-            item: {
-              title: 'Що виведе print(2 ** 3)?',
-              questionItem: {
-                question: {
-                  required: true,
-                  choiceQuestion: {
-                    type: 'RADIO',
-                    options: [
-                      { value: '6' },
-                      { value: '8' },
-                      { value: '9' }
-                    ],
-                    shuffle: true
-                  }
-                }
-              }
-            },
-            location: { index: 0 }
-          }
-        }
-      ]
-    };
-
-    await gapi.client.forms.forms.batchUpdate({
-      formId: formId,
-      resource: update
-    });
-
-    console.log(`Google Form created: https://docs.google.com/forms/d/${formId}/edit`);
+    return this.http.post(url, formData, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    }).toPromise();
   }
 }

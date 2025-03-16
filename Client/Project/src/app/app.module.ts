@@ -10,6 +10,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { QuizComponent } from './_components/quiz/quiz.component';
 import { TextInputComponent } from './_forms/text-input/text-input.component';
+import { QuizzesComponent } from './_components/quizzes/quizzes.component';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { TextInputComponent } from './_forms/text-input/text-input.component';
     RegisterComponent,
     CreateTestComponent,
     QuizComponent,
-    TextInputComponent
+    TextInputComponent,
+    QuizzesComponent
   ],
   imports: [
     BrowserModule,

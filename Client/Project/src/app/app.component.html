@@ -4,9 +4,15 @@
   <div class="logo">
     <img src="assets/logo.png" alt="AutoQuiz" />
   </div>
-  <div class="icons">
+
+  <div class="icons" *ngIf="(accountService.currentUser$ | async) as user">
     <img src="assets/bell-svgrepo-com.png" alt="Сповіщення" />
     <img src="assets/user-circle-svgrepo-com.svg" alt="Профіль" />
+  </div>
+
+  <div class="icons" *ngIf="!(accountService.currentUser$ | async) as user">
+    <a class="nav-link" routerLink="/register" routerLinkActive="active">Реєстрація</a>
+    <a class="nav-link" routerLink="/auth" routerLinkActive="active">Авторизація</a>
   </div>
 </header>
 

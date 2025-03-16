@@ -16,9 +16,11 @@ export class AccountService {
   constructor(private http: HttpClient) { }
 
   login(model: any) {
-    return this.http.post<User>(this.baseUrl + 'account/login', model).pipe(
+    console.log(model)
+    return this.http.post<User>(this.baseUrl + 'Authentication/Login', model).pipe(
       map((response: User) => {
         const user = response;
+        console.log(user)
         if (user) {
           this.setCurrentUser(user);
         }
@@ -27,8 +29,17 @@ export class AccountService {
   }
 
   register(model: any) {
-    return this.http.post<User>(this.baseUrl + 'account/register', model).pipe(
+    console.log(model)
+
+    const sendBody = {
+      Name : model.username,
+      Email: model.email,
+      Password: model.password
+    };
+
+    return this.http.post<User>(this.baseUrl + 'Authentication/Register', sendBody).pipe(
       map(user => {
+        console.log(user)
         if (user) {
           this.setCurrentUser(user);
         }
