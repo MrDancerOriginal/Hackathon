@@ -13,7 +13,7 @@ using System.Text;
 
 namespace Server.Controllers
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
@@ -67,7 +67,8 @@ namespace Server.Controllers
                     return Ok(new AuthResult()
                     {
                         Result = true,
-                        Token = token
+                        Token = token,
+                        Id = new_user.Id
 
                     });
                 
@@ -102,6 +103,7 @@ namespace Server.Controllers
                         Result = false
                     });
 
+
                 var isCorrect = await _userManager.CheckPasswordAsync(existing_user, loginRequest.Password);
 
                 if (!isCorrect)
@@ -119,7 +121,8 @@ namespace Server.Controllers
                 return Ok(new AuthResult()
                 {
                     Token = jwtToken,
-                    Result = true
+                    Result = true,
+                    Id = existing_user.Id
                 });
             }
 
