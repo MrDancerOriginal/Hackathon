@@ -34,13 +34,25 @@ namespace Server.Controllers
                 return BadRequest("AuthorId та Title є обов'язковими полями.");
             }
 
+            TestStatus status = TestStatus.Draft;
+            
+            if(request.Status == "Private")
+            {
+                status = TestStatus.Private;
+            }
+            else if (request.Status == "Published")
+            {
+                status = TestStatus.Published;
+            }
+
             var test = new Test
             {
                 Title = request.Title,
                 Description = request.Description,
                 AuthorId = request.AuthorId,
                 DateCreated = DateTime.UtcNow,
-                Status = request.Status
+                Status = status,
+                PDFFileId = request.PDFFileId
             };
 
             if (request.Questions != null && request.Questions.Any())
@@ -91,7 +103,9 @@ namespace Server.Controllers
                     Title = t.Title,
                     Description = t.Description,
                     DateCreated = t.DateCreated,
-                    Status = t.Status
+                    Status = t.Status,
+                    PDFFileId = (int)t.PDFFileId,
+                    Questions = t.Questions
                 })
                 .ToListAsync();
 
@@ -183,14 +197,14 @@ namespace Server.Controllers
         [HttpPost("generate/{PDFFileId}")]
         public async Task<IActionResult> GenerateTest(int PDFFileId)
         {
-            // Знаходимо PDF-файл у БД за його ідентифікатором
+            // Find PDF file in database
             var pdfFile = await _context.PDFFiles.FindAsync(PDFFileId);
             if (pdfFile == null)
-                return NotFound("PDF файл не знайдено.");
+                return NotFound("PDF file not found.");
 
-            // Формуємо prompt для LLM
+            // Create prompt for LLM
             var prompt = $@"
-Generate a single multiple-choice question based on the text below.
+Generate 5 multiple-choice questions based on the text below.
 Ensure the answer options are directly relevant to the context.
 Return exactly one correct answer and three incorrect answers.
 Provide a valid JSON object in the following structure:
@@ -209,12 +223,11 @@ Provide a valid JSON object in the following structure:
   ]
 }}
 
-Do not include any additional text, explanations, or formatting. Return only a valid JSON.
 Text:
 {pdfFile.ExtractedText}
 ";
 
-            // Виклик LLMService
+            // Call LLM service
             string llmResponse;
             try
             {
@@ -222,76 +235,44 @@ Text:
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Помилка при виклику LLM: {ex.Message}");
+                return StatusCode(500, $"LLM call failed: {ex.Message}");
             }
 
-            // Парсимо відповідь, яка повертається як масив об'єктів з полем generated_text.
-            List<HuggingFaceResponse> hfResponses;
-            try
-            {
-                hfResponses = JsonConvert.DeserializeObject<List<HuggingFaceResponse>>(llmResponse);
-            }
-            catch
-            {
-                return Ok(new
-                {
-                    rawResponse = llmResponse,
-                    message = "Не вдалося десеріалізувати відповідь від Hugging Face у масив."
-                });
-            }
+            // Clean the response (remove markdown code blocks if present)
+            var cleanJson = llmResponse
+                .Replace("```json", "")
+                .Replace("```", "")
+                .Trim();
 
-            if (hfResponses == null || hfResponses.Count == 0)
-            {
-                return Ok(new
-                {
-                    rawResponse = llmResponse,
-                    message = "Модель повернула пусту відповідь."
-                });
-            }
-
-            var rawText = hfResponses[0].GeneratedText;
-            if (string.IsNullOrWhiteSpace(rawText))
-            {
-                return Ok(new
-                {
-                    rawResponse = llmResponse,
-                    message = "Модель повернула порожній generated_text."
-                });
-            }
-
-            // Використовуємо Regex, щоб вилучити JSON-фрагмент між ```json і ```
-            var pattern = new System.Text.RegularExpressions.Regex("```json(.*?)```", System.Text.RegularExpressions.RegexOptions.Singleline);
-            var match = pattern.Match(rawText);
-            if (!match.Success)
-            {
-                return Ok(new
-                {
-                    rawResponse = rawText,
-                    message = "Не знайдено JSON-фрагмент у відповіді. Перевірте формат."
-                });
-            }
-
-            var jsonFragment = match.Groups[1].Value;
-
+            // Deserialize directly into our DTO
             GeneratedTestDto generatedTest;
             try
             {
-                generatedTest = JsonConvert.DeserializeObject<GeneratedTestDto>(jsonFragment);
+                generatedTest = JsonConvert.DeserializeObject<GeneratedTestDto>(cleanJson);
             }
-            catch
+            catch (Exception ex)
             {
-                return Ok(new
+                return StatusCode(500, new
                 {
-                    rawResponse = jsonFragment,
-                    message = "Не вдалося десеріалізувати вилучений JSON-фрагмент у GeneratedTestDto."
+                    error = "Failed to parse LLM response",
+                    details = ex.Message,
+                    rawResponse = cleanJson
                 });
             }
 
-            // Повертаємо виключно згенеровані питання та варіанти відповідей у JSON-форматі
+            if (generatedTest?.Questions == null || !generatedTest.Questions.Any())
+            {
+                return StatusCode(500, new
+                {
+                    error = "No valid questions generated",
+                    rawResponse = cleanJson
+                });
+            }
+
+            // Return clean JSON structure
             return Ok(generatedTest);
         }
     }
 
 
-}
+    }

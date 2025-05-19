@@ -48,9 +48,20 @@ builder.Services.AddIdentityCore<IdentityUser>(options => options.SignIn.Require
 
 builder.Services.AddScoped<LLMService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder
+            .WithOrigins("http://localhost:4200") // Add your Angular app URL
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials());
+});
+
+
 var app = builder.Build();
 
-//app.UseCors("AllowLocalhost4200");  // Use the CORS policy
+app.UseCors("AllowSpecificOrigin");  // Use the CORS policy
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

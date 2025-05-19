@@ -10,7 +10,7 @@ export const routes: Routes = [
   { path: '', component: AuthComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'create-test', component: CreateTestComponent },
-  { path: 'quiz', component: QuizComponent},
+  { path: 'quiz/:id', component: QuizComponent},
   { path: 'quizzes/:id', component: QuizzesComponent}
 ];
 

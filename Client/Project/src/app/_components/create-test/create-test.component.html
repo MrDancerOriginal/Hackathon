@@ -1,43 +1,97 @@
-<!-- <app-quiz></app-quiz> -->
+<div class="create-test-container">
+  <div class="form-wrapper">
+    <!-- Header Section -->
+    <div class="form-header">
+      <h1 class="form-title">
+        <i class="bi bi-file-earmark-plus form-icon"></i> Create New Test
+      </h1>
+      <p class="form-subtitle">Upload your material and generate a quiz automatically</p>
+    </div>
 
-<h1>Створити тест</h1>
-<form>
-  <div class="form-group">
-    <label for="test-title">Введіть назву тесту:</label>
-    <input type="text" id="test-title" name="test-title" />
+    <!-- Main Form -->
+    <form [formGroup]="testForm" class="test-creation-form">
+      <!-- Title & Questions Row -->
+      <div class="form-row">
+        <div class="form-group floating-label">
+          <input type="text" id="test-title" formControlName="title"
+                 class="form-input" placeholder=" " [class.invalid]="testForm.get('title')?.invalid && testForm.get('title')?.touched">
+          <label for="test-title" class="form-label">Test Title *</label>
+          <div *ngIf="testForm.get('title')?.invalid && testForm.get('title')?.touched"
+               class="error-message">
+            <i class="bi bi-exclamation-circle"></i> Title is required
+          </div>
+        </div>
+
+        <div class="form-group floating-label">
+          <input type="number" id="question-count" formControlName="questionCount"
+                 class="form-input" placeholder=" " min="1" [class.invalid]="testForm.get('questionCount')?.invalid && testForm.get('questionCount')?.touched">
+          <label for="question-count" class="form-label">Questions *</label>
+          <div *ngIf="testForm.get('questionCount')?.invalid && testForm.get('questionCount')?.touched"
+               class="error-message">
+            <i class="bi bi-exclamation-circle"></i> Minimum 1 question
+          </div>
+        </div>
+      </div>
+
+      <!-- Description & Options Row -->
+      <div class="form-row">
+        <div class="form-group floating-label textarea-group">
+          <textarea id="test-description" formControlName="description"
+                    class="form-input" placeholder=" " rows="3"></textarea>
+          <label for="test-description" class="form-label">Description</label>
+        </div>
+
+        <div class="form-group floating-label">
+          <input type="number" id="answer-options" formControlName="answerOptions"
+                 class="form-input" placeholder=" " min="2" [class.invalid]="testForm.get('answerOptions')?.invalid && testForm.get('answerOptions')?.touched">
+          <label for="answer-options" class="form-label">Options *</label>
+          <div *ngIf="testForm.get('answerOptions')?.invalid && testForm.get('answerOptions')?.touched"
+               class="error-message">
+            <i class="bi bi-exclamation-circle"></i> Minimum 2 options
+          </div>
+        </div>
+      </div>
+
+      <!-- File Upload Section -->
+      <div class="upload-section">
+        <label class="upload-label">Source Material *</label>
+        <div class="file-upload-card" (click)="fileInput.click()"
+             [class.active]="isDragging" (dragover)="onDragOver($event)"
+             (dragleave)="onDragLeave()" (drop)="onDrop($event)">
+          <div class="upload-content">
+            <i class="bi bi-cloud-arrow-up upload-icon"></i>
+            <h3 class="upload-title">{{ fileName ? fileName : 'Drag & drop your file here' }}</h3>
+            <p class="upload-subtitle">or click to browse files</p>
+            <input type="file" #fileInput (change)="onFileSelected($event)" hidden
+                   accept=".pdf,.doc,.docx,.txt">
+          </div>
+        </div>
+        <div *ngIf="fileName" class="file-preview">
+          <i class="bi bi-file-earmark-text file-icon"></i>
+          <span class="file-name">{{ fileName }}</span>
+          <button class="file-clear" (click)="clearFile()">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+        <p class="file-requirements">Supported formats: PDF, DOC, DOCX, TXT • Max 10MB</p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="bi bi-x-lg"></i> Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="onUpload()"
+                [disabled]="!selectedFile || testForm.invalid">
+          <i class="bi bi-magic"></i> Generate Test
+          <span class="btn-hover-effect"></span>
+        </button>
+        <button type="button" class="btn btn-google" (click)="createForm()"
+                [disabled]="!selectedFile || testForm.invalid">
+          <i class="bi bi-google"></i> Export to Google
+          <span class="btn-hover-effect"></span>
+        </button>
+      </div>
+    </form>
   </div>
-
-  <div class="form-group">
-    <label for="question-count">Кількість питань:</label>
-    <input type="number" id="question-count" name="question-count" />
-  </div>
-
-  <div class="form-group">
-    <label for="answer-options">Кількість варіантів відповідей:</label>
-    <input type="number" id="answer-options" name="answer-options" />
-  </div>
-
-  <div class="file-upload">
-    <input
-      type="file"
-      id="file-upload"
-      name="file-upload"
-      hidden
-      (change)="onFileSelected($event)"
-      accept=".pdf"
-    />
-    <span id="file-name">{{ fileName }}</span>
-    <!-- Тепер над кнопкою -->
-  </div>
-
-  <label for="file-upload" class="custom-file-button" hidden (click)="onLoad()">
-    <img src="assets/file-upload.png" alt="Додати файл" />
-    Завантажити файл
-  </label>
-
-
-  <button type="submit" (click)="onUpload()" >Відправити файл</button>
-  <button type="submit" (click)="onGenerate()" >Згенерувати тест</button>
-  <button type="submit" (click)="createForm()" >Експорт в Google Form</button>
-</form>
-
+</div>

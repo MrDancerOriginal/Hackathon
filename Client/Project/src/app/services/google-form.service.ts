@@ -1,48 +1,92 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, from } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { environment } from '../../environments/environments';
 
-declare const gapi: any; // Декларація gapi як any
+declare const gapi: any; // Temporary declaration until types are properly loaded
 
 @Injectable({
   providedIn: 'root'
 })
 export class GoogleFormService {
-  private clientId = environment.clientId;
-  private scope = 'https://www.googleapis.com/auth/forms.body';
+  private readonly API_URL = 'https://forms.googleapis.com/v1/forms';
+  private readonly SCOPES = 'https://www.googleapis.com/auth/forms.body';
+  private readonly DISCOVERY_DOC = 'https://forms.googleapis.com/$discovery/rest?version=v1';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.loadGapi();
+  }
 
-  async authenticateUser() {
+  private loadGapi(): Promise<void> {
     return new Promise((resolve, reject) => {
-      gapi.load('client:auth2', async () => {
-        await gapi.client.init({
-          clientId: this.clientId,
-          scope: this.scope
-        });
+      const script = document.createElement('script');
+      script.src = 'https://apis.google.com/js/api.js';
+      script.async = true;
+      script.defer = true;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error('Failed to load Google API'));
+      document.body.appendChild(script);
+    });
+  }
 
-        const authInstance = gapi.auth2.getAuthInstance();
-        authInstance.signIn().then(() => {
-          const token = authInstance.currentUser.get().getAuthResponse().access_token;
-          resolve(token);
-        }).catch(reject);
+  initializeGapi(): Promise<void> {
+    return gapi.load('client:auth2', () => {
+      return gapi.client.init({
+        apiKey: 'YOUR_API_KEY',
+        clientId: environment.clientId,
+        discoveryDocs: [this.DISCOVERY_DOC],
+        scope: this.SCOPES
       });
     });
   }
 
-  createGoogleForm(accessToken: string) {
-    const url = 'https://forms.googleapis.com/v1/forms';
-    const formData = {
-      info: { title: 'Нова форма' },
-      items: [{
-        title: 'Ваше питання?',
-        questionItem: { question: { required: true } }
-      }]
+  authenticateUser(): Observable<any> {
+    return from(this.loadGapi()).pipe(
+      switchMap(() => from(this.initializeGapi())),
+      switchMap(() => {
+        const authInstance = gapi.auth2.getAuthInstance();
+        return from(authInstance.signIn());
+      }),
+      switchMap(() => {
+        const authResponse = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse();
+        return authResponse.access_token;
+      })
+    );
+  }
+
+  createGoogleForm(token: string, title: string, questions: any[]): Observable<any> {
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     };
 
-    return this.http.post(url, formData, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    }).toPromise();
+    const formStructure = {
+      info: {
+        title: title,
+        documentTitle: title
+      },
+      items: this.mapQuestionsToFormItems(questions)
+    };
+
+    return this.http.post(this.API_URL, formStructure, { headers });
+  }
+
+  private mapQuestionsToFormItems(questions: any[]): any[] {
+    return questions.map(question => ({
+      title: question.questionText,
+      questionItem: {
+        question: {
+          required: true,
+          choiceQuestion: {
+            type: 'RADIO',
+            options: question.answers.map((answer : any) => ({
+              value: answer.answerText
+            })),
+            shuffle: true
+          }
+        }
+      }
+    }));
   }
 }

@@ -1,28 +1,94 @@
-<!-- test.component.html
-<div class="test-container">
-  <h2>{{ test.title }}</h2>
-  <p><strong>Description:</strong> {{ test.description }}</p>
-  <p><strong>Author ID:</strong> {{ test.authorId }}</p>
-  <p><strong>Date Created:</strong> {{ test.dateCreated }}</p>
-  <p><strong>Status:</strong> {{ test.status }}</p>
+<div class="container py-5">
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h1 class="h3 mb-0">{{ quizTitle }}</h1>
+    </div>
 
-  <h3>Questions:</h3>
-  <div *ngFor="let question of test.questions">
-    <h4>{{ question.order }}. {{ question.text }}</h4>
-    <ul>
-      <li *ngFor="let answer of question.answers">
-        {{ answer.text }} <span *ngIf="answer.isCorrect">(✔ Correct)</span>
-      </li>
-    </ul>
+    <div class="card-body">
+      <!-- Loading state -->
+      <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3">Loading quiz questions...</p>
+      </div>
+
+      <!-- Error state -->
+      <div *ngIf="errorMessage && !isLoading" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Quiz content -->
+      <div *ngIf="!isLoading && !errorMessage && questions.length > 0">
+        <!-- Progress indicator -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div class="text-muted">
+            Question {{ currentQuestionIndex + 1 }} of {{ totalQuestions }}
+          </div>
+          <div class="progress" style="height: 10px; width: 70%;">
+            <div class="progress-bar bg-success"
+                 [style.width]="((currentQuestionIndex + 1) / totalQuestions * 100) + '%'">
+            </div>
+          </div>
+        </div>
+
+        <!-- Current question -->
+        <div *ngIf="!quizSubmitted">
+          <h3 class="mb-4">{{ questions[currentQuestionIndex]?.questionText }}</h3>
+
+          <div class="list-group mb-4">
+            <button *ngFor="let answer of questions[currentQuestionIndex]?.answers; let i = index"
+                    class="list-group-item list-group-item-action text-start"
+                    [ngClass]="{
+                      'active': isSelected(currentQuestionIndex, i),
+                      'list-group-item-success': isSelected(currentQuestionIndex, i) && isCorrectAnswer(currentQuestionIndex, i),
+                      'list-group-item-danger': isSelected(currentQuestionIndex, i) && !isCorrectAnswer(currentQuestionIndex, i)
+                    }"
+                    (click)="selectAnswer(currentQuestionIndex, i)">
+              {{ answer.answerText }}
+            </button>
+          </div>
+
+          <!-- Navigation buttons -->
+          <div class="d-flex justify-content-between">
+            <button class="btn btn-outline-primary"
+                    (click)="prevQuestion()"
+                    [disabled]="currentQuestionIndex === 0">
+              Previous
+            </button>
+
+            <button *ngIf="currentQuestionIndex < totalQuestions - 1"
+                    class="btn btn-primary"
+                    (click)="nextQuestion()">
+              Next
+            </button>
+
+            <button *ngIf="currentQuestionIndex === totalQuestions - 1"
+                    class="btn btn-success"
+                    (click)="submitQuiz()">
+              Submit Quiz
+            </button>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div *ngIf="quizSubmitted" class="text-center">
+          <h3 class="mb-4">Quiz Results</h3>
+          <div class="display-4 mb-4">
+            Score: {{ score }} / {{ totalQuestions }}
+          </div>
+          <div class="progress mb-4" style="height: 30px;">
+            <div class="progress-bar bg-success"
+                 [style.width]="(score / totalQuestions * 100) + '%'">
+              {{ (score / totalQuestions * 100).toFixed(1) }}%
+            </div>
+          </div>
+
+          <button class="btn btn-primary" (click)="resetQuiz()">
+            Try Again
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
-</div> -->
-
-<div *ngFor="let question of questions">
-  <h2>{{ question.questionText }}</h2>
-  <ul>
-    <li *ngFor="let answer of question.answers" (click)="checkAnswer(answer)">
-      {{ answer.answerText }}
-    </li>
-  </ul>
-  <p *ngIf="selectedAnswer !== null">{{ message }}</p>
 </div>

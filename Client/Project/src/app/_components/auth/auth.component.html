@@ -1,16 +1,80 @@
-<form *ngIf="!(accountService.currentUser$ | async)" #loginForm="ngForm" class="d-flex" (ngSubmit)="login()" autocomplete="off">
-  <input
-         name="email"
-         [(ngModel)]="model.email"
-         class="form-control me-2"
-         type="email"
-         placeholder="Username"
-         style="margin-bottom: 15px;">
-  <input name="password"
-         [(ngModel)]="model.password"
-         class="form-control me-2"
-         type="password"
-         placeholder="Password">
+<div class="container-fluid min-vh-100">
+  <div class="row g-0">
+    <!-- Left Side - Image -->
+    <div class="col-lg-6 d-none d-lg-block">
+      <div class="h-100" style="background-color: #2817C0;">
+        <img src="assets/form-image.png"
+             alt="Login Illustration"
+             class="img-fluid h-100 w-100 object-fit-cover opacity-75">
+      </div>
+    </div>
 
-  <button style="margin-top: 15px;width: 100%;" class="btn btn-success" type="submit">Авторизація</button>
-</form>
+    <!-- Right Side - Login Form -->
+    <div class="col-lg-6 d-flex align-items-center">
+      <div class="p-5 w-100" style="max-width: 500px; margin: 0 auto;">
+        <h1 class="mb-4" style="color: #2817C0;">AutoQuiz</h1>
+        <h2 class="mb-4">Nice to see you again</h2>
+
+        <form *ngIf="!(accountService.currentUser$ | async)" #loginForm="ngForm" (ngSubmit)="login()" autocomplete="off">
+          <!-- Email/Phone -->
+          <div class="mb-4">
+            <label for="email" class="form-label">Email or phone number</label>
+            <input name="email"
+                   [(ngModel)]="model.email"
+                   class="form-control"
+                   type="email"
+                   id="email"
+                   placeholder="Enter your email or phone"
+                   style="padding: 12px; border-radius: 8px; border: 1px solid #948BE2;">
+          </div>
+
+          <!-- Password -->
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input name="password"
+                   [(ngModel)]="model.password"
+                   class="form-control"
+                   type="password"
+                   id="password"
+                   placeholder="Enter your password"
+                   style="padding: 12px; border-radius: 8px; border: 1px solid #948BE2;">
+            <small class="text-muted">Password must contain at least 8 characters with symbols to maintain security.</small>
+          </div>
+
+          <!-- Remember Me & Forgot Password -->
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="rememberMe">
+              <label class="form-check-label" for="rememberMe">Remember me</label>
+            </div>
+            <a href="#" style="color: #2817C0;">Forgot password?</a>
+          </div>
+
+          <!-- Login Button -->
+          <button class="btn w-100 py-3 mb-4"
+                  type="submit"
+                  style="background-color: #2817C0; color: white; border-radius: 8px;">
+            Login
+          </button>
+
+          <!-- Divider -->
+          <div class="d-flex align-items-center mb-4">
+            <hr class="flex-grow-1" style="border-color: #808080;">
+            <span class="px-3" style="color: #808080;">Or login with</span>
+            <hr class="flex-grow-1" style="border-color: #808080;">
+          </div>
+
+          <!-- Google Login -->
+          <button type="button" class="btn btn-outline-secondary w-100 py-2 mb-3">
+            <i class="bi bi-google me-2"></i> Continue with Google
+          </button>
+
+          <!-- Sign Up Link -->
+          <div class="text-center">
+            <p>Don't have an account? <a routerLink="/register" style="color: #2817C0; font-weight: 500;">Sign up</a></p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

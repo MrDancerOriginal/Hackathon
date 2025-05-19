@@ -1,159 +1,74 @@
-/* You can add global styles to this file, and also import other style files */
-/* Загальні стилі */
+:root {
+  --primary: #2817C0;
+  --secondary: #948BE2;
+  --light: #F9F9FF;
+  --dark: #2A1D17;
+  --gray: #808080;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f5f5fc;
-  color: #000;
-  text-align: center;
-  margin: 0;
-  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2A1D17;
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 50px;
-  background: white;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  font-size: 20px;
-  font-weight: bold;
-  color: #2817c0;
-}
-
-.logo img {
-  width: 155px;
-  height: 56px;
-  margin-right: 10px;
-}
-
-.icons img {
-  width: 48px;
-  height: 48px;
-  margin-left: 20px;
-  cursor: pointer;
-}
-
-main {
-  width: 50%;
-  margin: 20px auto;
-  background: white;
-  padding: 40px;
-  border-radius: 10px;
-}
-
-h1 {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 48px;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 680px;
-  margin: 0 auto;
-}
-
-.form-group {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 24px;
-}
-
-input,
-textarea {
-  width: 442px;
-
-  border: 2px solid #2817c0;
-  border-radius: 6px;
-  font-size: 16px;
-  outline: none;
-}
-
-label {
-  width: 220px;
-  font-weight: bold;
-  text-align: left;
-}
-
-input,
-textarea {
-  width: 100%;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  border: 2px solid #2817c0;
-  border-radius: 6px;
-  font-size: 16px;
-  outline: none;
-}
-
-.file-upload {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 2px dashed #2817c0;
-  width: 680px;
-  height: 104px;
-  margin: 15px 0;
-  border-radius: 10px;
-  position: relative;
-  border-spacing: 50px;
-  margin-top: 48px;
-  margin-bottom: 24px;
-}
-
-.custom-file-button {
+.header {
   background-color: white;
-  color: #2817c0;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  border: 2px solid #2817c0;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  width: 100%;
-  height: 40px;
-  margin-bottom: 32px;
-  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.custom-file-button img {
-  width: 32px;
-  height: 32px;
+.navbar-brand img {
+  transition: transform 0.3s ease;
 }
 
-.file-upload span {
-  margin-top: 10px;
-  font-size: 14px;
-  color: #555;
+.navbar-brand:hover img {
+  transform: scale(1.05);
 }
 
+.nav-link {
+  color: var(--dark);
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
 
-button[type="submit"] {
-  width: 100%;
-  background-color: #2817c0;
+.nav-link:hover, .nav-link.active {
+  color: var(--primary);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-primary:hover {
+  background-color: #1a0d9e;
+  border-color: #1a0d9e;
+}
+
+.btn-outline-primary {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary);
   color: white;
-  font-size: 18px;
-  padding: 12px;
-  border: none;
-  border-radius: 6px;
-  margin-bottom: 5px;
-  cursor: pointer;
-  font-weight: bold;
 }
 
-button[type="submit"]:hover {
-  background-color: #1e128f;
+.dropdown-menu {
+  border: none;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
+
+.footer a {
+  transition: color 0.3s ease;
+}
+
+.footer a:hover {
+  color: var(--secondary);
+  text-decoration: none;
+}
+
+.main-content {
+  padding-top: 20px;
+}
+

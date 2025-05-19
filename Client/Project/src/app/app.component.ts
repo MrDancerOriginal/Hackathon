@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AccountService } from './services/account.service';
 
 @Component({
@@ -6,7 +6,19 @@ import { AccountService } from './services/account.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
   title = 'Project';
+  userId : string;
   constructor(public accountService:AccountService){}
+
+  ngOnInit(): void {
+    this.accountService.currentUser$.subscribe(user => {
+      this.userId = user.id;
+    })
+  }
+
+
+  logout(){
+    this.accountService.logout();
+  }
 }

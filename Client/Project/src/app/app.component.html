@@ -1,23 +1,83 @@
+<header class="header">
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+      <!-- Logo -->
+      <a class="navbar-brand" routerLink="/">
+        <img src="assets/logo.png" alt="AutoQuiz" height="40" class="d-inline-block align-top">
+      </a>
 
+      <!-- Mobile Toggle -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-<header>
-  <div class="logo">
-    <img src="assets/logo.png" alt="AutoQuiz" />
-  </div>
+      <!-- Navigation Content -->
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <!-- For authenticated users -->
+        <div class="d-flex align-items-center ms-auto" *ngIf="(accountService.currentUser$ | async) as user">
+          <a routerLink="/quizzes/{{userId}}" class="nav-link mx-2 text-primary" routerLinkActive="active">
+            <i class="bi bi-card-checklist fs-5"></i>
+            <span class="d-none d-md-inline ms-1">Quizzes</span>
+          </a>
+          <a routerLink="/create-test" class="nav-link mx-2 text-primary" routerLinkActive="active">
+            <i class="bi bi-plus-circle fs-5"></i>
+            <span class="d-none d-md-inline ms-1">Create Test</span>
+          </a>
+          <div class="dropdown ms-2">
+            <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown">
+              <img src="assets/user-circle-svgrepo-com.svg" alt="Profile" width="32" height="32" class="rounded-circle">
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li><a class="dropdown-item" href="#">Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" (click)="logout()">Logout</a></li>
+            </ul>
+          </div>
+        </div>
 
-  <div class="icons" *ngIf="(accountService.currentUser$ | async) as user">
-    <a routerLink="/quiz" routerLinkActive="active" style="color:#2817C0;"><img src="assets/card-checklist.svg" alt="Сповіщення"/></a>
-    <a routerLink="/create-test" routerLinkActive="active"><img src="assets/user-circle-svgrepo-com.svg" alt="Профіль" /></a>
-  </div>
-
-  <div class="icons" *ngIf="!(accountService.currentUser$ | async) as user">
-    <a class="nav-link" routerLink="/register" routerLinkActive="active">Реєстрація</a>
-    <a class="nav-link" routerLink="/" routerLinkActive="active">Авторизація</a>
-  </div>
+        <!-- For guests -->
+        <div class="d-flex align-items-center ms-auto" *ngIf="!(accountService.currentUser$ | async)">
+          <a class="btn btn-outline-primary me-2" routerLink="/">Login</a>
+          <a class="btn btn-primary" routerLink="/register">Register</a>
+        </div>
+      </div>
+    </div>
+  </nav>
 </header>
 
-<main>
-
-  <router-outlet></router-outlet>
-
+<main class="main-content" style="background-color: #F9F9FF; min-height: calc(100vh - 72px);">
+  <div class="container py-5">
+    <router-outlet></router-outlet>
+  </div>
 </main>
+
+<footer class="footer py-4" style="background-color: #2A1D17; color: white;">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <h5>AutoQuiz</h5>
+        <p>Test your knowledge with our interactive quizzes and learning tools.</p>
+      </div>
+      <div class="col-md-3">
+        <h5>Links</h5>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-white">Home</a></li>
+          <li><a href="#" class="text-white">About</a></li>
+          <li><a href="#" class="text-white">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5>Legal</h5>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-white">Privacy Policy</a></li>
+          <li><a href="#" class="text-white">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <hr class="my-4" style="border-color: #808080;">
+    <div class="text-center">
+      <small>© 2023 AutoQuiz. All rights reserved.</small>
+    </div>
+  </div>
+</footer>

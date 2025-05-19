@@ -5,6 +5,7 @@ import { User } from '../interfaces/user.interface';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Question } from '../interfaces/question.interface';
 import { TestStatus } from '../enums/test-status.enum';
+import { TestSummaryDto } from '../interfaces/test-summary-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +36,8 @@ export class QuizService {
   }
 
   getTestsByUser(userId : string){
-    return this.http.get<any>(`${this.baseUrl}/user/${userId}`);
+    console.log("hello")
+    return this.http.get<TestSummaryDto[]>(`${this.baseUrl}Test/user/${userId}`);
   }
 
   generateTestDemo(pdfFileId: number = 1): Question[]{
@@ -66,12 +68,17 @@ export class QuizService {
     return this.http.post<any>(`${this.baseUrl}Test/generate/${pdfFileId}`, pdfFileId, { headers });
   }
 
-  createTest(title: string, userId: string) :any {
+  createTest(title: string, userId: string, pdffileId: number, questions: any[], description: string, questionCount: number, answerOptions: number ) :any {
+
+
+
     const testData = {
-      title: title,
-      description: '',
       authorId: userId,
-      status: TestStatus.Published
+      title: title,
+      description: description,
+      status: "Published",
+      questions : questions,
+      PDFFileId : pdffileId
     };
 
     return this.http.post(this.baseUrl + 'Test/create', testData);

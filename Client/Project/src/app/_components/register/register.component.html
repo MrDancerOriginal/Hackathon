@@ -1,34 +1,105 @@
+<div class="container-fluid min-vh-100">
+  <div class="row g-0">
+    <!-- Left Side - Image -->
+    <div class="col-lg-6 d-none d-lg-block">
+      <div class="h-100" style="background-color: #2817C0;">
+        <img src="assets/form-image.png"
+             alt="Registration Illustration"
+             class="img-fluid h-100 w-100 object-fit-cover opacity-75">
+      </div>
+    </div>
 
-<form [formGroup]="registerForm" (ngSubmit)="registerForm.valid && register()" autocomplete="off" style="display: flex; justify-content: center;">
-  <h2 class="text-center text-primary">Реєстрація</h2>
-  <hr />
+    <!-- Right Side - Registration Form -->
+    <div class="col-lg-6 d-flex align-items-center">
+      <div class="p-5 w-100" style="max-width: 500px; margin: 0 auto;">
+        <h1 class="mb-4" style="color: #2817C0;">AutoQuiz</h1>
+        <h2 class="mb-4">Join our community</h2>
 
+        <form [formGroup]="registerForm" (ngSubmit)="registerForm.valid && register()" autocomplete="off">
+          <!-- Name Field -->
+          <div class="mb-4">
+            <label for="username" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="username" formControlName="username"
+              [class.is-invalid]="registerForm.controls['username'].touched && registerForm.controls['username'].invalid"
+              style="padding: 12px; border-radius: 8px; border: 1px solid #948BE2;"
+              placeholder="Enter your full name">
+            <div *ngIf="registerForm.controls['username'].errors?.['required'] && registerForm.controls['username'].touched"
+              class="invalid-feedback">Please enter your full name.</div>
+          </div>
 
+          <!-- Email/Phone -->
+          <div class="mb-4">
+            <label for="email" class="form-label">Email or phone number</label>
+            <input type="text" class="form-control" id="email" formControlName="email"
+              [class.is-invalid]="registerForm.controls['email'].touched && registerForm.controls['email'].invalid"
+              style="padding: 12px; border-radius: 8px; border: 1px solid #948BE2;"
+              placeholder="Enter your email or phone">
+            <div *ngIf="registerForm.controls['email'].errors?.['required'] && registerForm.controls['email'].touched"
+              class="invalid-feedback">Please enter your email or phone number.</div>
+          </div>
 
-  <app-text-input [formControl]="$any(registerForm.controls['username'])"
-                  [label]="'ім`я'"></app-text-input>
+          <!-- Password -->
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" formControlName="password"
+              [class.is-invalid]="registerForm.controls['password'].touched && registerForm.controls['password'].invalid"
+              style="padding: 12px; border-radius: 8px; border: 1px solid #948BE2;"
+              placeholder="Create a password">
+            <small class="text-muted">Password must contain at least 8 characters with symbols to maintain security.</small>
+            <div *ngIf="registerForm.controls['password'].errors?.['required'] && registerForm.controls['password'].touched"
+              class="invalid-feedback">Please enter a password.</div>
+            <div *ngIf="registerForm.controls['password'].errors?.['minlength']"
+              class="invalid-feedback">
+              Password must be at least {{registerForm.controls['password'].errors?.['minlength'].requiredLength}} characters.
+            </div>
+          </div>
 
-  <app-text-input [formControl]="$any(registerForm.controls['email'])"
-                  [label]="'email'"></app-text-input>
+          <!-- Confirm Password -->
+          <div class="mb-4">
+            <label for="confirmPassword" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword"
+              [class.is-invalid]="registerForm.controls['confirmPassword'].touched && registerForm.controls['confirmPassword'].invalid"
+              style="padding: 12px; border-radius: 8px; border: 1px solid #948BE2;"
+              placeholder="Confirm your password">
+            <div *ngIf="registerForm.controls['confirmPassword'].errors?.['required'] && registerForm.controls['confirmPassword'].touched"
+              class="invalid-feedback">Please confirm your password.</div>
+            <div *ngIf="registerForm.controls['confirmPassword'].errors?.['notMatching']"
+              class="invalid-feedback">Passwords don't match.</div>
+          </div>
 
-  <app-text-input [formControl]="$any(registerForm.controls['password'])"
-                  [label]="'пароль'"
-                  [type]="'password'"></app-text-input>
+          <!-- Validation Errors -->
+          <div *ngIf="validationErrors" class="alert alert-danger">
+            <ul class="mb-0">
+              <li *ngFor="let error of validationErrors">{{error}}</li>
+            </ul>
+          </div>
 
-  <app-text-input [formControl]="$any(registerForm.controls['confirmPassword'])"
-                  [label]="'підтвердження паролю'"
-                  [type]="'password'"></app-text-input>
+          <!-- Register Button -->
+          <button class="btn w-100 py-3 mb-4"
+                  type="submit"
+                  [disabled]="!registerForm.valid"
+                  style="background-color: #2817C0; color: white; border-radius: 8px;">
+            Sign Up
+          </button>
 
-  <div class="row" *ngIf="validationErrors">
-    <ul class="text-danger">
-      <li *ngFor="let error of validationErrors">
-        {{error}}
-      </li>
-    </ul>
+          <!-- Divider -->
+          <div class="d-flex align-items-center mb-4">
+            <hr class="flex-grow-1" style="border-color: #808080;">
+            <span class="px-3" style="color: #808080;">Or sign up with</span>
+            <hr class="flex-grow-1" style="border-color: #808080;">
+          </div>
+
+          <!-- Google Sign Up -->
+          <button type="button" class="btn btn-outline-secondary w-100 py-2 mb-3">
+            <i class="bi bi-google me-2"></i> Continue with Google
+          </button>
+
+          <!-- Login Link -->
+          <div class="text-center">
+            <p>Already have an account? <a routerLink="/login" style="color: #2817C0; font-weight: 500;">Log in</a></p>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
-
-
-    <button class="btn btn-success me-2" type="submit" [disabled]="!registerForm.valid">Зареєструватись</button>
-    <button class="btn btn-default" type="submit" (click)="cancel()">Відмінити</button>
-
-</form>
+</div>
