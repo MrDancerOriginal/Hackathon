@@ -38,6 +38,23 @@ export class QuizService {
     return this.http.get<any>(`${this.baseUrl}/user/${userId}`);
   }
 
+  generateTestDemo(pdfFileId: number = 1): Question[]{
+    return [
+      {
+        questionText: "У якому році був заснований Національний Авіаційний Університет?",
+        answers: [
+          { answerText: "1925", isCorrect: false },
+          { answerText: "1933", isCorrect: true },
+          { answerText: "1947", isCorrect: false },
+          { answerText: "1955", isCorrect: false }
+        ]
+      }
+    ];
+
+
+
+  }
+
   generateTest(pdfFileId: number = 1): Observable<any> {
 
     const headers = new HttpHeaders({
@@ -49,7 +66,7 @@ export class QuizService {
     return this.http.post<any>(`${this.baseUrl}Test/generate/${pdfFileId}`, pdfFileId, { headers });
   }
 
-  createTest(title: string, userId: number): Observable<any> {
+  createTest(title: string, userId: string) :any {
     const testData = {
       title: title,
       description: '',
@@ -59,5 +76,6 @@ export class QuizService {
 
     return this.http.post(this.baseUrl + 'Test/create', testData);
   }
+
 
 }

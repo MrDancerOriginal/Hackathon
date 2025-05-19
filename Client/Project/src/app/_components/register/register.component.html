@@ -1,19 +1,22 @@
-<form [formGroup]="registerForm" (ngSubmit)="registerForm.valid && register()" autocomplete="off">
-  <h2 class="text-center text-primary">Sign up</h2>
+
+<form [formGroup]="registerForm" (ngSubmit)="registerForm.valid && register()" autocomplete="off" style="display: flex; justify-content: center;">
+  <h2 class="text-center text-primary">Реєстрація</h2>
   <hr />
 
+
+
   <app-text-input [formControl]="$any(registerForm.controls['username'])"
-                  [label]="'Username'"></app-text-input>
+                  [label]="'ім`я'"></app-text-input>
 
   <app-text-input [formControl]="$any(registerForm.controls['email'])"
-                  [label]="'Email'"></app-text-input>
+                  [label]="'email'"></app-text-input>
 
   <app-text-input [formControl]="$any(registerForm.controls['password'])"
-                  [label]="'Password'"
+                  [label]="'пароль'"
                   [type]="'password'"></app-text-input>
 
   <app-text-input [formControl]="$any(registerForm.controls['confirmPassword'])"
-                  [label]="'Confirm Password'"
+                  [label]="'підтвердження паролю'"
                   [type]="'password'"></app-text-input>
 
   <div class="row" *ngIf="validationErrors">
@@ -24,8 +27,8 @@
     </ul>
   </div>
 
-  <div class="text-center">
-    <button class="btn btn-success me-2" type="submit" [disabled]="!registerForm.valid">Register</button>
-    <button class="btn btn-default" type="button" (click)="cancel()">Cancel</button>
-  </div>
+
+    <button class="btn btn-success me-2" type="submit" [disabled]="!registerForm.valid">Зареєструватись</button>
+    <button class="btn btn-default" type="submit" (click)="cancel()">Відмінити</button>
+
 </form>

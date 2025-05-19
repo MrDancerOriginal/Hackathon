@@ -17,8 +17,8 @@ export class AuthComponent {
 
   login() {
     this.accountService.login(this.model).subscribe({
-      next: _ => {
-        this.router.navigateByUrl('/quizzes');
+      next: id => {
+        this.router.navigateByUrl('/quizzes/'+id);
         this.model = {};
       }
     });

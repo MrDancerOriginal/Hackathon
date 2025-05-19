@@ -5,6 +5,7 @@ import { TestingService } from '../../services/testing.service';
 import { AccountService } from '../../services/account.service';
 import { User } from '../../interfaces/user.interface';
 import { GoogleFormService } from '../../services/google-form.service';
+import { WorkUser } from '../../interfaces/work-user.interface';
 
 @Component({
   selector: 'app-create-test',
@@ -13,7 +14,7 @@ import { GoogleFormService } from '../../services/google-form.service';
 })
 export class CreateTestComponent implements OnInit {
 
-  currentUser : User;
+  currentUser : WorkUser;
 
   //Кількість питань, кількість відповідей, назва, файл
   selectedFile: File | null = null;

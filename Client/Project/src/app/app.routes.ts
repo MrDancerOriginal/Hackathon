@@ -7,11 +7,11 @@ import { QuizComponent } from './_components/quiz/quiz.component';
 import { QuizzesComponent } from './_components/quizzes/quizzes.component';
 
 export const routes: Routes = [
-  { path: 'auth', component: AuthComponent },
+  { path: '', component: AuthComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'create-test', component: CreateTestComponent },
   { path: 'quiz', component: QuizComponent},
-  { path: 'quizzes', component: QuizzesComponent}
+  { path: 'quizzes/:id', component: QuizzesComponent}
 ];
 
 @NgModule({

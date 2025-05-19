@@ -6,16 +6,16 @@
          placeholder={{label}} />
 
   <div class="invalid-feedback" *ngIf="control.errors?.['required']">
-    Please enter a {{label}}
+    Будь ласка, введіть {{label}}.
   </div>
   <div class="invalid-feedback" *ngIf="control.errors?.['minlength']">
-    {{label}} must be at least {{control.errors?.['minlength'].requiredLength}} characters
+    {{label}} Має мати як мінімум {{control.errors?.['minlength'].requiredLength}} символів.
   </div>
   <div class="invalid-feedback" *ngIf="control.errors?.['maxlength']">
-    {{label}} must be at most {{control.errors?.['maxlength'].requiredLength}} characters
+    {{label}} має бути менше{{control.errors?.['maxlength'].requiredLength}} символів.
   </div>
 
   <div class="invalid-feedback" *ngIf="control.errors?.['notMatching']">
-    Passwords do not match
+    Паролі не збігаються.
   </div>
 </div>

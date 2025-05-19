@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environments';
 import { HttpClient } from '@angular/common/http';
-import { User } from '../interfaces/user.interface';
-import { BehaviorSubject, map } from 'rxjs';
+import { User as number } from '../interfaces/user.interface';
+import { BehaviorSubject, map, Observable } from 'rxjs';
+import { WorkUser } from '../interfaces/work-user.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -10,20 +11,21 @@ import { BehaviorSubject, map } from 'rxjs';
 export class AccountService {
   baseUrl = environment.apiUrl;
 
-  private currentUserSource = new BehaviorSubject<User | null>(null);
+  private currentUserSource = new BehaviorSubject<WorkUser | null>(null);
   currentUser$ = this.currentUserSource.asObservable();
 
   constructor(private http: HttpClient) { }
 
-  login(model: any) {
-    console.log(model)
-    return this.http.post<User>(this.baseUrl + 'Authentication/Login', model).pipe(
-      map((response: User) => {
+  login(model: any) : Observable<string>{
+
+    return this.http.post<string>(this.baseUrl + 'Authentication/Login', model).pipe(
+      map((response: any) => {
+        console.log(response.id)
         const user = response;
-        console.log(user)
         if (user) {
           this.setCurrentUser(user);
         }
+        return response.id;
       })
     );
   }
@@ -37,17 +39,22 @@ export class AccountService {
       Password: model.password
     };
 
-    return this.http.post<User>(this.baseUrl + 'Authentication/Register', sendBody).pipe(
+    return this.http.post<any>(this.baseUrl + 'Authentication/Register', sendBody).pipe(
       map(user => {
         console.log(user)
+        const myuser = {
+          id: user.id,
+          token: user.token
+        }
+
         if (user) {
-          this.setCurrentUser(user);
+          this.setCurrentUser(myuser);
         }
       })
     );
   }
 
-  setCurrentUser(user: User) {
+  setCurrentUser(user: WorkUser) {
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUserSource.next(user);
   }

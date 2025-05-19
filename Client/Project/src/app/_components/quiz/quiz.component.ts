@@ -19,7 +19,7 @@ export class QuizComponent implements OnInit {
 
   checkAnswer(answer: Answer) {
     this.selectedAnswer = answer;
-    this.message = answer.isCorrect ? 'Correct!' : 'Try again.';
+    this.message = answer.isCorrect ? '✅' : '❌';
   }
 
   index: number;
@@ -27,10 +27,8 @@ export class QuizComponent implements OnInit {
   constructor(private quizService: QuizService){}
 
   ngOnInit(): void {
-    this.quizService.generateTest(this.index).subscribe(response => {
-      this.questions = response.questions
-      console.log(this.questions);
-    });
+
+    this.questions = this.quizService.generateTestDemo(this.index)
   }
 
 
